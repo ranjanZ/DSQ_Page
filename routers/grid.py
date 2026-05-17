@@ -49,7 +49,8 @@ GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PAT
 GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{GITHUB_REPO}/{BRANCH}/{FILE_PATH}"
 
 # Get token from environment
-TOKEN = os.environ.get("GITHUB_TOKEN")
+#TOKEN = os.environ.get("GITHUB_TOKEN") # go here https://github.com/settings/personal-access-tokens to create a token with "repo" scope and set it in your environment variable
+
 if not TOKEN:
     raise RuntimeError("GITHUB_TOKEN environment variable not set.")
 
@@ -112,7 +113,7 @@ async def submit_mt5_details(details: MT5Details):
             raise HTTPException(status_code=400, detail=f"MT5 ID {details.mt5_id} already exists.")
 
         # Create new user entry (set valid_upto to 30 days from now)
-        valid_upto = (datetime.utcnow() + timedelta(days=30)).strftime("%d-%m-%Y")
+        valid_upto = (datetime.utcnow() + timedelta(days=90)).strftime("%d-%m-%Y")
         new_user = {
             "user_id": details.mt5_id,
             "server_name": "unknown",   # you can ask the user if needed
