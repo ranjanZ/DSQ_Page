@@ -10,7 +10,7 @@ from fastapi.templating import Jinja2Templates
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
-from routers import video, nifty500, info, partners   # import all routers
+from routers import video, nifty500, info, partners, grid  # import all routers
 
 # Ensure required directories exist
 Path("templates").mkdir(exist_ok=True)
@@ -49,10 +49,16 @@ app.include_router(video.router)
 app.include_router(nifty500.router)
 app.include_router(info.router)        # if present
 app.include_router(partners.router)    # if present
+app.include_router(grid.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/privacy", response_class=HTMLResponse)
+async def privacy(request: Request):
+    return templates.TemplateResponse("privacy.html", {"request": request})
+
 
 if __name__ == "__main__":
     import uvicorn

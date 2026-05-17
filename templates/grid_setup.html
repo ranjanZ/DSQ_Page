@@ -1,0 +1,206 @@
+<!-- templates/grid_setup.html -->
+<div class="card-dark p-4">
+    <h4 class="section-title">🤖 Grid Trading Setup - V1.0 </h4>
+    <p><strong>Through Expert Advisors</strong> <span class="badge bg-warning text-dark">Restricted features</span></p>
+
+    <div class="mb-4">
+        <h5>Setup Steps <span class="badge bg-secondary">Windows Machine</span></h5>
+        <ol class="list-group list-group-numbered">
+            <!-- Step 1: Download and Login -->
+            <li class="list-group-item bg-transparent border-secondary text-light">
+                <strong>Download MT5 & Login</strong>
+                <ul class="mt-2">
+                    <li>Download MT5 from the official website:
+                        <a href="https://www.metatrader5.com/en/download" target="_blank" class="text-gold">metatrader5.com</a>
+                    </li>
+                    <li>Login with your broker’s <strong>User ID</strong>, <strong>Password</strong>, and <strong>Server</strong> (MetaTrader 5).</li>
+                    <li>In MetaTrader, go to <em>Tools → Options → Expert Advisors</em>:
+                        <ul>
+                            <li>✅ Allow <strong>Algorithmic Trading</strong></li>
+                            <li>✅ Allow Web Request for listed URL → Add 
+                            <code class="copy-url" style="cursor:pointer;" title="Click to copy">
+                                https://raw.githubusercontent.com <i class="fas fa-copy ms-1 small"></i>
+                            </code>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- Step 2: Download the Algo Bot -->
+            <li class="list-group-item bg-transparent border-secondary text-light">
+                <strong>Download the Algo Bot (dsq_v1)</strong>
+                <ul class="mt-2">
+                    <li>Download the EA file:
+                        <a href="https://github.com/ranjanZ/ranjanZ.github.io/raw/refs/heads/master/blog/dalal_street_quants/DSQ_EA/dsq_v1.ex5" target="_blank" class="btn btn-sm btn-outline-gold">
+                            <i class="fas fa-download"></i> dsq_v1.ex5
+                        </a>
+                    </li>
+                    <li>Double‑click the downloaded file → it will be added to MetaTrader.</li>
+                    <li>In the <em>Navigator</em> panel (right side), find <strong>dsq_v1</strong> under <em>Expert Advisors</em>.</li>
+                </ul>
+            </li>
+            <!-- Step 3: Send your details (NEW FORM) -->
+            <li class="list-group-item bg-transparent border-secondary text-light">
+                <strong>Send your details for activation</strong>
+                <p class="mt-2 mb-1">Submit your MetaTrader ID, Name, and Broker to get Licence.</p>
+
+                <div id="mt5-details-form" class="bg-dark p-3 rounded">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="mt5-id" class="form-label text-light fw-semibold">🆔 MT5 ID</label>
+                            <input type="text" id="mt5-id" class="form-control bg-dark text-white" placeholder="e.g. 12345678">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="mt5-name" class="form-label text-light fw-semibold">👤 Your Name</label>
+                            <input type="text" id="mt5-name" class="form-control bg-dark text-white" placeholder="e.g. John Doe">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="mt5-broker" class="form-label text-light fw-semibold">🏦 Broker</label>
+                            <input type="text" id="mt5-broker" class="form-control bg-dark text-white" placeholder="e.g. XM, Vantage">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button id="submit-mt5-btn" class="btn btn-gold w-100">
+                                <i class="fas fa-paper-plane"></i> Submit
+                            </button>
+                        </div>
+                    </div>
+                    <div id="mt5-message" class="mt-2 small"></div>
+                </div>
+
+                <small class="text-muted">You can also message directly on the <a href="https://t.me/+diyR-ERuurk1Mzhl" target="_blank" class="text-gold">Telegram group</a> (preferred).</small>
+            </li>
+
+        </ol>
+    </div>
+
+    <!-- Partner Codes (for V2/V3) -->
+    <div class="mb-4">
+        <h5><i class="fas fa-handshake"></i> Partner Code (Bot V2 & V3)</h5>
+        <table class="table table-dark table-bordered">
+            <thead>
+                <tr>
+                    <th>Broker</th>
+                    <th>Partner Code</th>
+                    <th>Create Account</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>XM</td>
+                    <td><code>4299V</code></td>
+                    <td><a href="https://affs.click/mvjlf" target="_blank" class="btn btn-sm btn-outline-light">Open Account</a></td>
+                </tr>
+                <tr>
+                    <td>Vantage</td>
+                    <td><code>VcM6U1DW</code></td>
+                    <td><a href="https://vigco.co/la-com-inv/VcM6U1DW" target="_blank" class="btn btn-sm btn-outline-light">Open Account</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="mb-4">
+        <h5><i class="fas fa-tools"></i> Troubleshooting</h5>
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <p><strong>Issue:</strong> Application closes instantly</p>
+                <p><strong>Solution:</strong></p>
+                <ol>
+                    <li>Right‑click inside the folder where the bot is</li>
+                    <li>Type the application name manually</li>
+                    <li>Copy the error message</li>
+                    <li>Paste it into the Telegram group for help (mention your OS)</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="alert alert-warning bg-transparent border-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Disclaimer:</strong> Always test on a <strong>Demo account</strong> first before using a Real account.
+    </div>
+
+    <div class="mt-4">
+        <p>For <strong>V2 and V3</strong> versions you need a partner code to unlock:
+            <span class="badge bg-secondary">Hedging</span>
+            <span class="badge bg-secondary">Trailing SL</span>
+            <span class="badge bg-secondary">Risk Management</span>
+            <span class="badge bg-secondary">Advanced Grid</span>
+        </p>
+        <p><i class="fas fa-video"></i> Weekly live 1‑hour setup call – <strong>free</strong>!</p>
+    </div>
+</div>
+
+<!-- JavaScript for the MT5 details form (inline because this partial is loaded dynamically) -->
+<script>
+    // Only attach listener once, even if loaded multiple times
+    if (typeof window.gridSetupFormInitialized === 'undefined') {
+        window.gridSetupFormInitialized = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitBtn = document.getElementById('submit-mt5-btn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', async () => {
+                    const id = document.getElementById('mt5-id').value.trim();
+                    const name = document.getElementById('mt5-name').value.trim();
+                    const broker = document.getElementById('mt5-broker').value.trim();
+                    const msgDiv = document.getElementById('mt5-message');
+
+                    if (!id || !name || !broker) {
+                        msgDiv.innerHTML = '<span class="text-danger">Please fill all fields.</span>';
+                        return;
+                    }
+
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+
+                    try {
+                        const res = await fetch('/api/submit-mt5-details', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ mt5_id: id, name: name, broker: broker })
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.success) {
+                            msgDiv.innerHTML = '<span class="text-success">✅ Licence created successfully for your metatrader ID. Use the bot after 5 minutes.</span>';
+                            // Clear form
+                            document.getElementById('mt5-id').value = '';
+                            document.getElementById('mt5-name').value = '';
+                            document.getElementById('mt5-broker').value = '';
+                        } else {
+                            msgDiv.innerHTML = `<span class="text-danger">❌ ${data.detail || 'Submission failed'}</span>`;
+                        }
+                    } catch (err) {
+                        msgDiv.innerHTML = '<span class="text-danger">Network error. Please try again.</span>';
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit';
+                    }
+                });
+            }
+        });
+    }
+
+// Copy URL to clipboard on click
+document.addEventListener('click', function(e) {
+    const target = e.target.closest('.copy-url');
+    if (!target) return;
+    e.preventDefault();
+
+    const url = target.getAttribute('data-url') || target.textContent.trim().replace(/ .*/, '');
+    navigator.clipboard.writeText(url).then(() => {
+        const originalHTML = target.innerHTML;
+        target.innerHTML = '✅ Copied!';
+        setTimeout(() => {
+            target.innerHTML = originalHTML;
+        }, 1200);
+    });
+});
+
+</script>
+
+
+
+
