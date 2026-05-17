@@ -129,10 +129,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                <li class="nav-item"><a class="nav-link" href="#subscribe">Subscribe</a></li>
+                <!-- <li class="nav-item"><a class="nav-link" href="#subscribe">Subscribe</a></li>
                 <li class="nav-item"><a class="nav-link" href="#partners">Partners</a></li>
                 <li class="nav-item"><a class="nav-link" href="#video-tab">Video Upload</a></li>
-                <li class="nav-item"><a class="nav-link" href="#community">Community</a></li>
+                <li class="nav-item"><a class="nav-link" href="#community">Community</a></li> -->
             </ul>
         </div>
     </div>
@@ -143,10 +143,6 @@
     <div class="container">
         <h1 class="display-4 fw-bold">Where <span class="text-gold">Algorithms</span> Beat Guesswork</h1>
         <p class="lead mt-3">Dalal Street Quants builds, tests, and analyzes algorithmic trading strategies for Nifty 50, Bank Nifty, Nifty 500 stocks, Gold and Bitcoin.</p>
-        <div class="mt-4">
-            <a href="#video-tab" class="btn btn-gold btn-lg me-2"><i class="fas fa-upload"></i> Try Temp Video Hub</a>
-            <a href="https://t.me/dalal_street_q" target="_blank" class="btn btn-outline-light btn-lg"><i class="fab fa-telegram"></i> Telegram Channel</a>
-        </div>
     </div>
 </section>
 
@@ -155,6 +151,12 @@
     <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">📊 Quant Edge</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="nifty500-tab" data-bs-toggle="tab" data-bs-target="#nifty500" type="button" role="tab">📈 Nifty 500</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="grid-tab" data-bs-toggle="tab" data-bs-target="#grid" type="button" role="tab">🤖 Grid Trading Setup</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">🤝 Partners & Codes</button>
@@ -239,8 +241,46 @@
             </div>
             <div class="mt-5 text-center">
                 <h5>📢 Telegram Community</h5>
-                <a href="https://t.me/dalal_street_q" class="btn btn-outline-light m-1"><i class="fab fa-telegram"></i> Channel</a>
+                <a href="https://t.me/dsqfxtrader" class="btn btn-outline-light m-1"><i class="fab fa-telegram"></i> Channel</a>
                 <a href="https://t.me/diyR-ERuurk1Mzhl" class="btn btn-outline-light m-1"><i class="fab fa-telegram"></i> Group</a>
+            </div>
+        </div>
+        
+        <!-- TAB 4: Nifty 500 JSON report -->
+        <div class="tab-pane fade" id="nifty500" role="tabpanel">
+            <div class="card-dark p-4">
+                <h4 class="section-title">📈 Nifty 500 Performance Report</h4>
+                <p>Paste a JSON payload containing initial capital, portfolio holdings, and date-by-date performance. The system shows a quick summary and the parsed report.</p>
+                <div class="mb-4">
+                    <textarea id="nifty500Json" class="form-control bg-dark text-white" rows="10" placeholder='{"initial_capital":100000,"performance":[{"date":"2026-05-01","equity":100500},{"date":"2026-05-02","equity":101200}],"portfolio":[{"symbol":"RELIANCE","weight":0.12},{"symbol":"TCS","weight":0.09}]}'></textarea>
+                </div>
+                <div class="d-flex gap-2 mb-4">
+                    <button class="btn btn-gold" id="submitNiftyJson"><i class="fas fa-play"></i> Generate Report</button>
+                    <button class="btn btn-outline-light" id="clearNiftyJson">Clear</button>
+                </div>
+                <div id="nifty500Result"></div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="grid" role="tabpanel">
+            <div class="card-dark p-4">
+                <h4 class="section-title">🤖 Grid Trading Setup</h4>
+                <p>Option 2: Through Expert Advisors [Restricted features]</p>
+                <div class="mb-4">
+                    <h5>Setup Steps [Windows Machine]</h5>
+                    <ol>
+                        <li><strong>Download and login to MT5</strong><br>Download MT5 from the official website and login using your broker credentials: User ID, Password, Server.</li>
+                        <li><strong>Enable algorithmic trading</strong><br>Open MetaTrader 5 settings and allow Algorithmic Trading.</li>
+                        <li><strong>Allow Web Request</strong><br>In MetaTrader Tools, allow Web Request for listed URLs and add <code>https://raw.githubusercontent.com</code>.</li>
+                        <li><strong>Send your details</strong><br>Send your ID, NAME, and broker to the Dalal Street Quants Telegram channel. Wait for confirmation.</li>
+                        <li><strong>Download the Algo Bot</strong><br>Download the Expert Advisor Algo Bot: <strong>dsq_v1</strong>. Double-click the bot and add it to MetaTrader.</li>
+                        <li><strong>Activate the EA</strong><br>Go to Experts panel, find <code>dsq_v1</code>, double-click it and start the expert advisor.</li>
+                    </ol>
+                    <p>For faster support, contact the Telegram channel directly.</p>
+                </div>
+                <div class="mt-3">
+                    <a href="https://t.me/dsqfxtrader" target="_blank" class="btn btn-outline-light me-2"><i class="fab fa-telegram"></i> Telegram Channel</a>
+                    <a href="https://raw.githubusercontent.com" target="_blank" class="btn btn-outline-light"><i class="fas fa-link"></i> raw.githubusercontent.com</a>
+                </div>
             </div>
         </div>
         
@@ -420,6 +460,62 @@
     document.getElementById('video-tab-btn').addEventListener('shown.bs.tab', () => {
         loadVideos();
     });
+
+    document.getElementById('submitNiftyJson').addEventListener('click', submitNiftyReport);
+    document.getElementById('clearNiftyJson').addEventListener('click', () => {
+        document.getElementById('nifty500Json').value = '';
+        document.getElementById('nifty500Result').innerHTML = '';
+    });
+
+    async function submitNiftyReport() {
+        const textarea = document.getElementById('nifty500Json');
+        const resultContainer = document.getElementById('nifty500Result');
+        let payload;
+        try {
+            payload = JSON.parse(textarea.value || '{}');
+        } catch (err) {
+            resultContainer.innerHTML = '<div class="alert alert-danger">Invalid JSON. Please fix the input before sending.</div>';
+            return;
+        }
+        if (!payload || typeof payload !== 'object') {
+            resultContainer.innerHTML = '<div class="alert alert-danger">Please enter a valid JSON object.</div>';
+            return;
+        }
+        resultContainer.innerHTML = '<div class="text-muted">Generating report...</div>';
+        try {
+            const response = await fetch('/api/nifty500-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail || 'Report generation failed');
+            }
+            const summary = data.summary || {};
+            const portfolio = Array.isArray(data.portfolio) ? data.portfolio : [];
+            const performance = Array.isArray(data.performance) ? data.performance : [];
+            resultContainer.innerHTML = `
+                <div class="alert alert-success">Report created successfully.</div>
+                <div class="row">
+                    <div class="col-md-3"><strong>Initial Capital:</strong><br>${Number(data.initial_capital).toLocaleString()}</div>
+                    <div class="col-md-3"><strong>Records:</strong><br>${summary.record_count || 0}</div>
+                    <div class="col-md-3"><strong>Final Equity:</strong><br>${summary.end_equity ?? '--'}</div>
+                    <div class="col-md-3"><strong>Net Return:</strong><br>${summary.net_return_pct ?? '--'}%</div>
+                </div>
+                <div class="mt-3">
+                    <h6>Portfolio</h6>
+                    ${portfolio.length ? `<pre class="bg-dark text-white p-3 rounded" style="white-space: pre-wrap;">${JSON.stringify(portfolio, null, 2)}</pre>` : '<p class="text-muted">No portfolio data provided.</p>'}
+                </div>
+                <div class="mt-3">
+                    <h6>Performance</h6>
+                    ${performance.length ? `<pre class="bg-dark text-white p-3 rounded" style="white-space: pre-wrap;">${JSON.stringify(performance, null, 2)}</pre>` : '<p class="text-muted">No performance records to show.</p>'}
+                </div>
+            `;
+        } catch (err) {
+            resultContainer.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+        }
+    }
 </script>
 </body>
 </html>
