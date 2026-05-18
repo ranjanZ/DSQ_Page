@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -129,10 +131,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-                <!-- <li class="nav-item"><a class="nav-link" href="#subscribe">Subscribe</a></li>
-                <li class="nav-item"><a class="nav-link" href="#partners">Partners</a></li>
-                <li class="nav-item"><a class="nav-link" href="#video-tab">Video Upload</a></li>
-                <li class="nav-item"><a class="nav-link" href="#community">Community</a></li> -->
             </ul>
         </div>
     </div>
@@ -147,16 +145,16 @@
 </section>
 
 <div class="container py-4">
-    <!-- Tabs: Info, Partners, Video Upload -->
+    <!-- Tabs -->
     <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">📊 Quant Edge</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="nifty500-tab" data-bs-toggle="tab" data-bs-target="#nifty500" type="button" role="tab">📈 Nifty 500</button>
+            <a class="nav-link" id="nifty500-tab" data-bs-toggle="tab" href="#nifty500" role="tab">📈 Nifty 500</a>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="grid-tab" data-bs-toggle="tab" data-bs-target="#grid" type="button" role="tab"> 🤖 Free Algo Bot Setup</button>
+            <button class="nav-link" id="grid-tab" data-bs-toggle="tab" data-bs-target="#grid" type="button" role="tab">🤖 Free Algo Bot Setup</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="partners-tab" data-bs-toggle="tab" data-bs-target="#partners" type="button" role="tab">🤝 Partners & Codes</button>
@@ -165,7 +163,7 @@
             <button class="nav-link" id="video-tab-btn" data-bs-toggle="tab" data-bs-target="#video" type="button" role="tab">🎥 Temp Video (10min)</button>
         </li>
     </ul>
-    
+
     <div class="tab-content">
         <!-- TAB 1: Information -->
         <div class="tab-pane fade show active" id="info" role="tabpanel">
@@ -178,7 +176,6 @@
                             <li class="mb-3"><i class="fas fa-chart-line text-gold me-3"></i> <strong>Get free bot setup </strong> with Expert Advisors</li>
                             <li class="mb-3"><i class="fas fa-brain text-gold me-3"></i> <strong>Get quant perspectives</strong> on markets, volatility, and alpha signals</li>
                             <li class="mb-3"><i class="fas fa-brain text-gold me-3"></i> <strong>Learn how AI can trade</strong> </li>
-
                         </ul>
                         <div class="mt-4 p-3 bg-dark rounded">
                             <i class="fas fa-graduation-cap me-2"></i> <strong>Educational Purpose Only</strong><br>
@@ -192,7 +189,7 @@
                             <span class="badge bg-secondary me-1">#PythonTrading</span>
                             <span class="badge bg-secondary me-1">#Nifty50</span>
                             <span class="badge bg-secondary me-1">#Nifty500</span>
-                            <span class="badge bg-secondary me-1">#NiftyBank</span> 
+                            <span class="badge bg-secondary me-1">#NiftyBank</span>
                         </div>
                     </div>
                 </div>
@@ -214,7 +211,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- TAB 2: Partners & Referrals -->
         <div class="tab-pane fade" id="partners" role="tabpanel">
             <div class="row g-4">
@@ -249,35 +246,31 @@
                 <a href="https://t.me/dsqfxtrader" class="btn btn-outline-light m-1"><i class="fab fa-telegram"></i> Group</a>
             </div>
         </div>
-        
-        <!-- TAB 4: Nifty 500 JSON report -->
+
+        <!-- TAB 3: Nifty 500 Live Dashboard -->
         <div class="tab-pane fade" id="nifty500" role="tabpanel">
             <div class="card-dark p-4">
-                <h4 class="section-title">📈 Nifty 500 Performance Report</h4>
-                <p>Paste a JSON payload containing initial capital, portfolio holdings, and date-by-date performance. The system shows a quick summary and the parsed report.</p>
+                <h4 class="section-title">📈 Nifty 500 Live Dashboard</h4>
+                <p class="mb-4">Automatically reads your permanent.json trading state.</p>
                 <div class="mb-4">
-                    <textarea id="nifty500Json" class="form-control bg-dark text-white" rows="10" placeholder='{"initial_capital":100000,"performance":[{"date":"2026-05-01","equity":100500},{"date":"2026-05-02","equity":101200}],"portfolio":[{"symbol":"RELIANCE","weight":0.12},{"symbol":"TCS","weight":0.09}]}'></textarea>
+                    <canvas id="profitChart" height="100"></canvas>
                 </div>
-                <div class="d-flex gap-2 mb-4">
-                    <button class="btn btn-gold" id="submitNiftyJson"><i class="fas fa-play"></i> Generate Report</button>
-                    <button class="btn btn-outline-light" id="clearNiftyJson">Clear</button>
-                </div>
-                <div id="nifty500Result"></div>
+                <h5 class="mb-3">📋 Holdings – Last 7 Trading Days</h5>
+                <div id="portfolioTableContainer" class="text-muted">Loading...</div>
             </div>
         </div>
+
+        <!-- TAB 4: Grid Trading Setup -->
         <div class="tab-pane fade" id="grid" role="tabpanel">
             {% include 'grid_setup.html' %}
         </div>
 
-        
-        <!-- TAB 3: Temporary Video Upload (10 min) -->
+        <!-- TAB 5: Temporary Video Upload -->
         <div class="tab-pane fade" id="video" role="tabpanel">
             <div class="card-dark p-4">
                 <div class="alert alert-warning bg-transparent border-warning text-warning">
                     <i class="fas fa-hourglass-half"></i> ⏳ Videos are automatically deleted after 10 minutes. Upload & share temporarily.
                 </div>
-                
-                <!-- Upload form -->
                 <div class="mb-5">
                     <h4><i class="fas fa-cloud-upload-alt"></i> Upload Video (max 200MB)</h4>
                     <form id="uploadForm" enctype="multipart/form-data">
@@ -291,8 +284,6 @@
                     </form>
                     <div id="uploadMessage" class="mt-2"></div>
                 </div>
-                
-                <!-- Active videos grid -->
                 <h4><i class="fas fa-video"></i> Active Videos (expire in 10min)</h4>
                 <div id="videosGrid" class="video-grid mt-3">
                     <div class="text-center text-muted">Loading videos...</div>
@@ -300,7 +291,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Community & Final Links -->
     <div id="community" class="mt-5 pt-3 text-center">
         <h3>Join Our Systematic Trading Revolution</h3>
@@ -311,7 +302,7 @@
             <a href="https://www.instagram.com/dsq_fx_trader/" target="_blank" class="btn btn-secondary"><i class="fab fa-instagram"></i> Instagram</a>
         </div>
     </div>
-    
+
     <div class="disclaimer text-center">
         <p><strong>Risk Warning:</strong> Trading financial instruments involves high risk. Past performance does not guarantee future results. The content and strategies discussed are for educational and informational purposes only. Always consult a qualified financial advisor before making investment decisions.</p>
         <p>© 2025 Dalal Street Quants | Built with FastAPI for scale</p>
@@ -321,14 +312,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
 <script>
-    // Clipboard functionality
+    // ========== CLIPBOARD ==========
     new ClipboardJS('.btn-copy', {
         text: function(trigger) {
             return trigger.parentElement.querySelector('strong').innerText;
         }
     });
-    
-    // Fetch and display videos
+
+    // ========== VIDEO UPLOAD & LIST ==========
     async function loadVideos() {
         const container = document.getElementById('videosGrid');
         try {
@@ -358,7 +349,6 @@
                 `;
                 container.appendChild(card);
             });
-            // Attach delete event listeners
             document.querySelectorAll('.delete-video').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const fileId = btn.getAttribute('data-id');
@@ -372,13 +362,13 @@
             container.innerHTML = '<div class="alert alert-danger">Error loading videos</div>';
         }
     }
-    
+
     function formatTime(secs) {
         const mins = Math.floor(secs / 60);
         const seconds = secs % 60;
         return `${mins}:${seconds.toString().padStart(2,'0')}`;
     }
-    
+
     let timerInterval = null;
     function startCountdownTimers() {
         if (timerInterval) clearInterval(timerInterval);
@@ -389,17 +379,11 @@
                 if (!expiresStr) return;
                 const expires = new Date(expiresStr);
                 const diff = Math.max(0, Math.floor((expires - now) / 1000));
-                if (diff <= 0) {
-                    el.innerText = "Expired";
-                    // remove video card after refresh? we'll reload list soon
-                } else {
-                    el.innerText = formatTime(diff);
-                }
+                el.innerText = diff <= 0 ? "Expired" : formatTime(diff);
             });
         }, 1000);
     }
-    
-    // Handle upload
+
     const uploadForm = document.getElementById('uploadForm');
     uploadForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -431,77 +415,113 @@
             uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload & Share';
         }
     });
-    
+
     function showMessage(msg, type) {
         const msgDiv = document.getElementById('uploadMessage');
         msgDiv.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
         setTimeout(() => msgDiv.innerHTML = '', 4000);
     }
-    
-    // Periodically refresh video list
+
     loadVideos();
     setInterval(loadVideos, 15000);
-    
-    // Refresh when video tab becomes active
     document.getElementById('video-tab-btn').addEventListener('shown.bs.tab', () => {
         loadVideos();
     });
 
-    document.getElementById('submitNiftyJson').addEventListener('click', submitNiftyReport);
-    document.getElementById('clearNiftyJson').addEventListener('click', () => {
-        document.getElementById('nifty500Json').value = '';
-        document.getElementById('nifty500Result').innerHTML = '';
-    });
+    // ========== NIFTY 500 DASHBOARD ==========
+    async function loadNiftyDashboard() {
+        const chartCanvas = document.getElementById('profitChart');
+        const tableContainer = document.getElementById('portfolioTableContainer');
+        if (!chartCanvas || !tableContainer) return;
+        tableContainer.innerHTML = '<div class="text-muted">Loading data...</div>';
 
-    async function submitNiftyReport() {
-        const textarea = document.getElementById('nifty500Json');
-        const resultContainer = document.getElementById('nifty500Result');
-        let payload;
         try {
-            payload = JSON.parse(textarea.value || '{}');
-        } catch (err) {
-            resultContainer.innerHTML = '<div class="alert alert-danger">Invalid JSON. Please fix the input before sending.</div>';
-            return;
-        }
-        if (!payload || typeof payload !== 'object') {
-            resultContainer.innerHTML = '<div class="alert alert-danger">Please enter a valid JSON object.</div>';
-            return;
-        }
-        resultContainer.innerHTML = '<div class="text-muted">Generating report...</div>';
-        try {
-            const response = await fetch('/api/nifty500-report', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail || 'Report generation failed');
+            const resp = await fetch('/api/nifty500-dashboard');
+            if (!resp.ok) {
+                const errData = await resp.json().catch(() => ({}));
+                throw new Error(errData.detail || `HTTP ${resp.status}`);
             }
-            const summary = data.summary || {};
-            const portfolio = Array.isArray(data.portfolio) ? data.portfolio : [];
-            const performance = Array.isArray(data.performance) ? data.performance : [];
-            resultContainer.innerHTML = `
-                <div class="alert alert-success">Report created successfully.</div>
-                <div class="row">
-                    <div class="col-md-3"><strong>Initial Capital:</strong><br>${Number(data.initial_capital).toLocaleString()}</div>
-                    <div class="col-md-3"><strong>Records:</strong><br>${summary.record_count || 0}</div>
-                    <div class="col-md-3"><strong>Final Equity:</strong><br>${summary.end_equity ?? '--'}</div>
-                    <div class="col-md-3"><strong>Net Return:</strong><br>${summary.net_return_pct ?? '--'}%</div>
-                </div>
-                <div class="mt-3">
-                    <h6>Portfolio</h6>
-                    ${portfolio.length ? `<pre class="bg-dark text-white p-3 rounded" style="white-space: pre-wrap;">${JSON.stringify(portfolio, null, 2)}</pre>` : '<p class="text-muted">No portfolio data provided.</p>'}
-                </div>
-                <div class="mt-3">
-                    <h6>Performance</h6>
-                    ${performance.length ? `<pre class="bg-dark text-white p-3 rounded" style="white-space: pre-wrap;">${JSON.stringify(performance, null, 2)}</pre>` : '<p class="text-muted">No performance records to show.</p>'}
-                </div>
-            `;
+            const data = await resp.json();
+
+            // Chart
+            if (typeof Chart !== 'undefined') {
+                if (window.niftyChart) window.niftyChart.destroy();
+                const ctx = chartCanvas.getContext('2d');
+                const labels = data.profit_curve.map(d => d.date);
+                window.niftyChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Realised PnL', data: data.profit_curve.map(d => d.realized_pnl), borderColor: '#4caf50', backgroundColor: 'rgba(76,175,80,0.1)', tension: 0.2 },
+                            { label: 'Unrealised PnL', data: data.profit_curve.map(d => d.unrealized_pnl), borderColor: '#2196f3', backgroundColor: 'rgba(33,150,243,0.1)', tension: 0.2 },
+                            { label: 'Total PnL', data: data.profit_curve.map(d => d.total_pnl), borderColor: '#ff9800', backgroundColor: 'rgba(255,152,0,0.1)', borderWidth: 2, tension: 0.2 }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { labels: { color: '#eef2ff' } } },
+                        scales: {
+                            x: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3748' } },
+                            y: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3748' }, title: { display: true, text: '₹ PnL', color: '#94a3b8' } }
+                        }
+                    }
+                });
+            } else {
+                chartCanvas.parentElement.innerHTML = '<div class="alert alert-warning">Chart.js not loaded. Check your internet or CDN.</div>';
+            }
+
+            // Table
+            if (!data.portfolio_table || data.portfolio_table.length === 0) {
+                tableContainer.innerHTML = '<div class="alert alert-info">No portfolio data yet.</div>';
+            } else {
+                let html = '';
+                data.portfolio_table.forEach(day => {
+                    html += `
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded">
+                            <strong class="text-gold">${day.date}</strong>
+                            <span class="badge bg-secondary">Unrealised: ₹${day.total_unrealized.toFixed(2)}</span>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-dark table-sm table-striped">
+                                <thead><tr><th>Symbol</th><th>Qty</th><th>Avg Price</th><th>Current Value</th><th>Unrealised PnL</th></tr></thead>
+                                <tbody>`;
+                    day.holdings.forEach(h => {
+                        const pnlClass = h.unrealized_pnl >= 0 ? 'text-success' : 'text-danger';
+                        html += `<tr>
+                            <td>${h.symbol}</td>
+                            <td>${h.quantity}</td>
+                            <td>₹${h.average_price.toFixed(2)}</td>
+                            <td>₹${h.current_value.toFixed(2)}</td>
+                            <td class="${pnlClass}">₹${h.unrealized_pnl.toFixed(2)}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table></div></div>`;
+                });
+                tableContainer.innerHTML = html;
+            }
         } catch (err) {
-            resultContainer.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
+            console.error('Nifty dashboard error:', err);
+            tableContainer.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
         }
     }
+
+    // Attach after DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabBtn = document.querySelector(
+            'button[data-bs-toggle="tab"][data-bs-target="#nifty500"], ' +
+            'a[data-bs-toggle="tab"][href="#nifty500"]'
+        );
+        if (tabBtn) {
+            tabBtn.addEventListener('shown.bs.tab', loadNiftyDashboard);
+            if (tabBtn.classList.contains('active')) {
+                loadNiftyDashboard();
+            }
+        } else {
+            console.warn('Nifty500 tab button not found');
+        }
+    });
 </script>
 </body>
 </html>
