@@ -443,19 +443,54 @@
             }
             const data = await resp.json();
 
-            // Chart
+            // For debugging – open browser console to see what the API is actually returning
+            console.log('Nifty API response:', data);
+
+            const safeNum = (val, decimals = 2) => (Number(val) || 0).toFixed(decimals);
+
+            // --- Summary (free capital + holdings value) ---
+            const summaryDiv = document.getElementById('niftySummary');
+            if (summaryDiv) {
+                const capital = data.capital_available ?? 0;
+                const holdingsVal = data.total_holdings_value ?? 0;
+                summaryDiv.innerHTML = `
+                    <span class="me-3"><strong>Total Free Capital:</strong> ₹${safeNum(capital)}</span>
+                    <span><strong>Total Holdings Value:</strong> ₹${safeNum(holdingsVal)}</span>
+                `;
+            }
+
+            // --- Chart ---
             if (typeof Chart !== 'undefined') {
                 if (window.niftyChart) window.niftyChart.destroy();
                 const ctx = chartCanvas.getContext('2d');
-                const labels = data.profit_curve.map(d => d.date);
+                const labels = (data.profit_curve || []).map(d => d.date);
                 window.niftyChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
                         datasets: [
-                            { label: 'Realised PnL', data: data.profit_curve.map(d => d.realized_pnl), borderColor: '#4caf50', backgroundColor: 'rgba(76,175,80,0.1)', tension: 0.2 },
-                            { label: 'Unrealised PnL', data: data.profit_curve.map(d => d.unrealized_pnl), borderColor: '#2196f3', backgroundColor: 'rgba(33,150,243,0.1)', tension: 0.2 },
-                            { label: 'Total PnL', data: data.profit_curve.map(d => d.total_pnl), borderColor: '#ff9800', backgroundColor: 'rgba(255,152,0,0.1)', borderWidth: 2, tension: 0.2 }
+                            {
+                                label: 'Cumulative Realised PnL',
+                                data: (data.profit_curve || []).map(d => d.cumulative_realized || 0),
+                                borderColor: '#4caf50',
+                                backgroundColor: 'rgba(76,175,80,0.1)',
+                                tension: 0.2
+                            },
+                            {
+                                label: 'Unrealised PnL (daily)',
+                                data: (data.profit_curve || []).map(d => d.unrealized_pnl || 0),
+                                borderColor: '#2196f3',
+                                backgroundColor: 'rgba(33,150,243,0.1)',
+                                tension: 0.2
+                            },
+                            {
+                                label: 'Total PnL',
+                                data: (data.profit_curve || []).map(d => d.total_pnl || 0),
+                                borderColor: '#ff9800',
+                                backgroundColor: 'rgba(255,152,0,0.1)',
+                                borderWidth: 2,
+                                tension: 0.2
+                            }
                         ]
                     },
                     options: {
@@ -468,45 +503,117 @@
                     }
                 });
             } else {
-                chartCanvas.parentElement.innerHTML = '<div class="alert alert-warning">Chart.js not loaded. Check your internet or CDN.</div>';
+                chartCanvas.parentElement.innerHTML = '<div class="alert alert-warning">Chart.js not loaded.</div>';
             }
 
-            // Table
+            // --- Portfolio Table ---
             if (!data.portfolio_table || data.portfolio_table.length === 0) {
                 tableContainer.innerHTML = '<div class="alert alert-info">No portfolio data yet.</div>';
-            } else {
-                let html = '';
-                data.portfolio_table.forEach(day => {
-                    html += `
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded">
-                            <strong class="text-gold">${day.date}</strong>
-                            <span class="badge bg-secondary">Unrealised: ₹${day.total_unrealized.toFixed(2)}</span>
+                return;
+            }
+
+            let html = '';
+            data.portfolio_table.forEach(day => {
+                const dayUnreal = day.total_unrealized ?? 0;
+                const dayReal = day.total_realized ?? 0;
+                html += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center bg-dark p-2 rounded">
+                        <strong class="text-gold">${day.date}</strong>
+                        <div>
+                            <span class="badge bg-secondary me-2">Unrealised: ₹${safeNum(dayUnreal)}</span>
+                            <span class="badge bg-info">Realised: ₹${safeNum(dayReal)}</span>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-dark table-sm table-striped">
-                                <thead><tr><th>Symbol</th><th>Qty</th><th>Avg Price</th><th>Current Value</th><th>Unrealised PnL</th></tr></thead>
-                                <tbody>`;
-                    day.holdings.forEach(h => {
-                        const pnlClass = h.unrealized_pnl >= 0 ? 'text-success' : 'text-danger';
+                    </div>
+                `;
+
+                const holdings = day.holdings || [];
+                if (holdings.length > 0) {
+                    html += `
+                    <h6 class="mt-2 text-muted">Holdings</h6>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Qty</th>
+                                    <th>Avg Price</th>
+                                    <th>Current Price</th>
+                                    <th>Unrealised PnL</th>
+                                    <th>PnL %</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    holdings.forEach(h => {
+                        const qty = h.quantity || 0;
+                        const avgPrice = h.average_price || 0;
+                        const curValue = h.current_value || 0;
+                        // Fallback: calculate current_price if missing or zero
+                        let curPrice = h.current_price;
+                        if (!curPrice || curPrice === 0) {
+                            curPrice = qty ? curValue / qty : 0;
+                        }
+                        const uPnL = h.unrealized_pnl || 0;
+                        // Fallback: calculate PnL% if missing or zero
+                        let pct = h.unrealized_pnl_pct;
+                        if (pct == null || pct === 0) {
+                            const cost = avgPrice * qty;
+                            pct = cost ? (uPnL / cost) * 100 : 0;
+                        }
+                        const pnlClass = uPnL >= 0 ? 'text-success' : 'text-danger';
+                        const pctClass = pct >= 0 ? 'text-success' : 'text-danger';
                         html += `<tr>
-                            <td>${h.symbol}</td>
-                            <td>${h.quantity}</td>
-                            <td>₹${h.average_price.toFixed(2)}</td>
-                            <td>₹${h.current_value.toFixed(2)}</td>
-                            <td class="${pnlClass}">₹${h.unrealized_pnl.toFixed(2)}</td>
+                            <td>${h.symbol ?? ''}</td>
+                            <td>${qty}</td>
+                            <td>₹${safeNum(avgPrice)}</td>
+                            <td>₹${safeNum(curPrice)}</td>
+                            <td class="${pnlClass}">₹${safeNum(uPnL)}</td>
+                            <td class="${pctClass}">${safeNum(pct)}%</td>
                         </tr>`;
                     });
-                    html += `</tbody></table></div></div>`;
-                });
-                tableContainer.innerHTML = html;
-            }
+                    html += `</tbody></table></div>`;
+                }
+
+                const closed = day.closed_positions || [];
+                if (closed.length > 0) {
+                    html += `
+                    <h6 class="mt-2 text-muted">Closed Positions</h6>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Qty</th>
+                                    <th>Entry Price</th>
+                                    <th>Exit Price</th>
+                                    <th>Realised PnL</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    closed.forEach(c => {
+                        const rPnL = c.realised_pnl ?? 0;
+                        const pnlClass = rPnL >= 0 ? 'text-success' : 'text-danger';
+                        html += `<tr>
+                            <td>${c.symbol ?? ''}</td>
+                            <td>${c.quantity ?? 0}</td>
+                            <td>₹${safeNum(c.entry_price)}</td>
+                            <td>₹${safeNum(c.exit_price)}</td>
+                            <td class="${pnlClass}">₹${safeNum(rPnL)}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table></div>`;
+                }
+
+                html += `</div>`;
+            });
+
+            tableContainer.innerHTML = html;
+
         } catch (err) {
             console.error('Nifty dashboard error:', err);
             tableContainer.innerHTML = `<div class="alert alert-danger">${err.message}</div>`;
         }
     }
-
     // Attach after DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
         const tabBtn = document.querySelector(
